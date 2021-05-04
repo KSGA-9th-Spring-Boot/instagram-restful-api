@@ -48,7 +48,7 @@ public class AuthRestController {
     JwtUtils jwtUtils;
 
     @PostMapping("/login")
-    public Response<JwtResponse> authenticateUser(@RequestBody LoginRequest loginRequest) {
+    public Response<JwtResponse> login(@RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
@@ -62,7 +62,7 @@ public class AuthRestController {
                 .collect(Collectors.toSet());
 
         return Response.<JwtResponse>ok().setPayload(
-                new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername())
+                new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), roles)
         );
     }
 

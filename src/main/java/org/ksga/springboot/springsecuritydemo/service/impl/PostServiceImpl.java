@@ -32,10 +32,15 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public boolean setNumberOfLikes(PostDto postDto) {
+        Post post = postMapper.postDtoToPost(postDto);
+        return postRepository.setNumberOfLikes(post);
+    }
+
+    @Override
     public PostDto deletePostById(Long id) {
         Post post = postRepository.findPostById(id);
-        PostDto postDto = postMapper.postToPostDto(post);
-        return postDto;
+        return postMapper.postToPostDto(post);
     }
 
     @Override

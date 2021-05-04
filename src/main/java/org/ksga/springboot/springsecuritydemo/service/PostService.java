@@ -9,6 +9,7 @@ import java.util.List;
 public interface PostService {
     PostDto findPostById(Long id);
     boolean update(PostDto postDto);
+    boolean setNumberOfLikes(PostDto postDto);
     List<PostDto> findAll();
     List<PostDto> findPostByFilter(PostFilter filter, Paging paging);
     Long countAllPostsByFilter(PostFilter filter);

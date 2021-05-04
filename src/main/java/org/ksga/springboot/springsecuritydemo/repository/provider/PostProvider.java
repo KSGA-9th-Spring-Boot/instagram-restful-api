@@ -2,6 +2,7 @@ package org.ksga.springboot.springsecuritydemo.repository.provider;
 
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.jdbc.SQL;
+import org.ksga.springboot.springsecuritydemo.model.Post;
 import org.ksga.springboot.springsecuritydemo.utils.Paging;
 
 public class PostProvider {
@@ -23,6 +24,19 @@ public class PostProvider {
         }}.toString();
         System.out.println(sql);
         return sql;
+    }
+
+    public String updatePost(@Param("post") Post post) {
+        return new SQL() {{
+            UPDATE("posts");
+            if (post.getCaption() != null) {
+                SET("caption = #{post.caption}");
+            }
+            if (post.getImage() != null) {
+                SET("image = #{post.image}");
+            }
+            WHERE("id = #{post.id}");
+        }}.toString();
     }
 
     public String countAllPostsByFilter(PostFilter filter) {

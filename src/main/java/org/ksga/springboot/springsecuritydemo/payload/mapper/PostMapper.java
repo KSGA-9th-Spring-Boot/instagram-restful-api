@@ -38,7 +38,6 @@ public interface PostMapper {
         } else {
             username = principal.toString();
         }
-        System.out.println(principal);
         return user.getUsername().equals(username);
     }
 

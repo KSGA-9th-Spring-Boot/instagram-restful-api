@@ -10,6 +10,7 @@ import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.UpdateProvider;
 import org.ksga.springboot.springsecuritydemo.model.Post;
 import org.ksga.springboot.springsecuritydemo.model.auth.User;
 import org.ksga.springboot.springsecuritydemo.repository.provider.PostFilter;
@@ -48,8 +49,12 @@ public interface PostRepository {
     @SelectProvider(type = PostProvider.class, method = "countAllPostsByFilter")
     Long countAllPostsByFilter(@Param("filter") PostFilter filter);
 
+    //    @Update("UPDATE posts SET caption = #{caption}, image = #{image} WHERE id = #{id}")
+    @UpdateProvider(type = PostProvider.class, method = "updatePost")
+    boolean update(@Param("post") Post post);
+
     @Update("UPDATE posts SET number_of_likes = #{numberOfLikes} WHERE id = #{id}")
-    boolean update(Post post);
+    boolean setNumberOfLikes(Post post);
 
     @Insert("INSERT INTO users_like_posts (user_id, post_id) VALUES (#{userId}, #{postId})")
     boolean likePost(Long userId, Long postId);

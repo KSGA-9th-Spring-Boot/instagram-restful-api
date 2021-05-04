@@ -80,7 +80,7 @@ public class MultiHttpSecurityConfig extends GlobalAuthenticationConfigurerAdapt
                     .and()
                     .antMatcher("/api/**")
                     .authorizeRequests()
-                    .antMatchers("/api/**").permitAll()
+                    .antMatchers("/api/**", "/api/files/**").permitAll()
                     .antMatchers("/api/posts/**")
                     .permitAll()
                     .antMatchers("/api/auth/**")
