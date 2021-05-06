@@ -12,7 +12,7 @@ public interface PostService {
     boolean setNumberOfLikes(PostDto postDto);
     List<PostDto> findAll();
     List<PostDto> findPostByFilter(PostFilter filter, Paging paging);
-    Long countAllPostsByFilter(PostFilter filter);
+    int countAllPostsByFilter(PostFilter filter);
     PostDto deletePostById(Long id);
     boolean likePost(Long userId, Long postId);
 }

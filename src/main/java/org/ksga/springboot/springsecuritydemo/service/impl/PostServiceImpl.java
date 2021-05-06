@@ -55,11 +55,13 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<PostDto> findPostByFilter(PostFilter filter, Paging paging) {
-        return null;
+        paging.setTotalCount(countAllPostsByFilter(filter));
+        List<Post> posts = postRepository.findPostByFilter(filter, paging);
+        return postMapper.postsToPostDtos(posts);
     }
 
     @Override
-    public Long countAllPostsByFilter(PostFilter filter) {
-        return null;
+    public int countAllPostsByFilter(PostFilter filter) {
+        return postRepository.countAllPostsByFilter(filter);
     }
 }

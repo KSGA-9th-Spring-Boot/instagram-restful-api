@@ -4,9 +4,12 @@ DROP TABLE IF EXISTS users_roles;
 
 CREATE TABLE users
 (
-    id       INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(250) NOT NULL,
-    password VARCHAR(250) NOT NULL
+    id                INT AUTO_INCREMENT PRIMARY KEY,
+    username          VARCHAR(250) NOT NULL,
+    password          VARCHAR(250) NOT NULL,
+    fullname          VARCHAR(250) NOT NULL,
+    profile           VARCHAR(250) DEFAULT NULL,
+    is_account_closed boolean      default false
 );
 
 CREATE TABLE roles
@@ -40,7 +43,20 @@ CREATE TABLE users_like_posts
     FOREIGN KEY (post_id) REFERENCES posts (id)
 );
 
-CREATE UNIQUE index post_postid_user_userid ON users_like_posts (
-    user_id,
-    post_id
+CREATE TABLE comments
+(
+    id        INT AUTO_INCREMENT PRIMARY KEY,
+    content   VARCHAR(250) NOT NULL,
+    parent_id INT          NULL,
+    user_id   INT          NOT NULL,
+    post_id   INT          NOT NULL,
+    FOREIGN KEY (parent_id) REFERENCES comments (id),
+    FOREIGN KEY (user_id) REFERENCES users (id),
+    FOREIGN KEY (post_id) REFERENCES posts (id)
 );
+
+CREATE
+    UNIQUE index post_postid_user_userid ON users_like_posts (
+                                                              user_id,
+                                                              post_id
+    );

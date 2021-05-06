@@ -1,6 +1,6 @@
 package org.ksga.springboot.springsecuritydemo.controller.rest;
 
-import org.ksga.springboot.springsecuritydemo.service.FileStorageService;
+import org.ksga.springboot.springsecuritydemo.service.impl.FileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;

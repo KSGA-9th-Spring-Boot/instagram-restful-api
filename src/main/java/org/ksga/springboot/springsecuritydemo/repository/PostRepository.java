@@ -30,6 +30,13 @@ public interface PostRepository {
     })
     List<Post> findAllPosts();
 
+    @Select("SELECT * FROM posts p user_id = #{userId}")
+    @Results({
+            @Result(property = "numberOfLikes", column = "number_of_likes")
+    })
+    List<Post> findPostsByUserId(Long userId);
+
+
     @Select("SELECT * FROM users WHERE id = #{id}")
     @Results({
             @Result(property = "id", column = "id"),
@@ -44,10 +51,14 @@ public interface PostRepository {
     Post findPostById(Long id);
 
     @SelectProvider(type = PostProvider.class, method = "findPostsByFilter")
+    @Results({
+            @Result(property = "numberOfLikes", column = "number_of_likes"),
+            @Result(property = "owner", column = "user_id", one = @One(select = "findUserById"))
+    })
     List<Post> findPostByFilter(@Param("filter") PostFilter filter, @Param("paging") Paging paging);
 
     @SelectProvider(type = PostProvider.class, method = "countAllPostsByFilter")
-    Long countAllPostsByFilter(@Param("filter") PostFilter filter);
+    int countAllPostsByFilter(@Param("filter") PostFilter filter);
 
     //    @Update("UPDATE posts SET caption = #{caption}, image = #{image} WHERE id = #{id}")
     @UpdateProvider(type = PostProvider.class, method = "updatePost")

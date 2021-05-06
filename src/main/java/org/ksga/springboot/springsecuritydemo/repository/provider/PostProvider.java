@@ -41,13 +41,15 @@ public class PostProvider {
 
     public String countAllPostsByFilter(PostFilter filter) {
         return new SQL() {{
-            SELECT("COUNT(id)");
-            FROM("posts");
-            if (filter.getCaption() != null)
-                WHERE("caption ILIKE '%' || #{title} || '%'");
-
-            if (filter.getUserId() != null)
-                WHERE("user_id = #{userId}");
+            SELECT("COUNT(p.id)");
+            FROM("posts p");
+            INNER_JOIN("users u ON u.id = p.user_id");
+            if (filter.getCaption() != null) {
+                WHERE("p.caption ILIKE '%' || #{filter.caption} || '%'");
+            }
+            if (filter.getUsername() != null) {
+                WHERE("u.username ILIKE '%' || #{filter.username} || '%'");
+            }
         }}.toString();
     }
 

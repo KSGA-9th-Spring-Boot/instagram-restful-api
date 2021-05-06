@@ -5,15 +5,16 @@ import org.ksga.springboot.springsecuritydemo.payload.request.LikeType;
 import org.ksga.springboot.springsecuritydemo.payload.request.PostLikeRequest;
 import org.ksga.springboot.springsecuritydemo.payload.request.PostRequest;
 import org.ksga.springboot.springsecuritydemo.payload.response.Response;
+import org.ksga.springboot.springsecuritydemo.repository.provider.PostFilter;
 import org.ksga.springboot.springsecuritydemo.security.service.UserDetailsImpl;
 import org.ksga.springboot.springsecuritydemo.service.PostService;
 import org.ksga.springboot.springsecuritydemo.utils.CurrentUser;
+import org.ksga.springboot.springsecuritydemo.utils.Paging;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +37,27 @@ public class PostRestController {
                     .<List<PostDto>>ok()
                     .setPayload(postService.findAll());
         } catch (Exception ex) {
+            return Response
+                    .<List<PostDto>>exception()
+                    .setErrors(ex.getMessage());
+        }
+    }
+
+    @GetMapping("/filter")
+    public Response<List<PostDto>> findPostsByFilter(PostFilter postFilter,
+                                                     int page,
+                                                     int limit) {
+        try {
+            Paging paging = new Paging();
+            paging.setLimit(limit);
+            paging.setPage(page);
+            List<PostDto> posts = postService.findPostByFilter(postFilter, paging);
+            System.out.println(posts);
+            return Response
+                    .<List<PostDto>>ok()
+                    .setPayload(posts);
+        } catch (Exception ex) {
+            ex.printStackTrace();
             return Response
                     .<List<PostDto>>exception()
                     .setErrors(ex.getMessage());

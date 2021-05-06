@@ -1,4 +1,4 @@
-package org.ksga.springboot.springsecuritydemo.service;
+package org.ksga.springboot.springsecuritydemo.service.impl;
 
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.ksga.springboot.springsecuritydemo.exception.FileNotFoundException;

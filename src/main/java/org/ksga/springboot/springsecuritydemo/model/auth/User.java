@@ -17,6 +17,7 @@ public class User {
     private String fullname;
     private String username;
     private String password;
+    private String imageUrl;
     private Set<Role> roles = new HashSet<>();
 
     public User(String username, String password) {
