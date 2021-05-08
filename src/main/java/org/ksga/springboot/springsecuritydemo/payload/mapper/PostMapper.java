@@ -38,6 +38,9 @@ public interface PostMapper {
         } else {
             username = principal.toString();
         }
+        if (user == null || user.getUsername() == null) {
+            return false;
+        }
         return user.getUsername().equals(username);
     }
 

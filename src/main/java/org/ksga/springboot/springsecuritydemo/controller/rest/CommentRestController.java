@@ -1,12 +1,15 @@
 package org.ksga.springboot.springsecuritydemo.controller.rest;
 
+import org.ksga.springboot.springsecuritydemo.exception.ResourceNotFoundException;
 import org.ksga.springboot.springsecuritydemo.payload.dto.CommentDto;
 import org.ksga.springboot.springsecuritydemo.payload.dto.UserDto;
 import org.ksga.springboot.springsecuritydemo.payload.request.CommentRequest;
 import org.ksga.springboot.springsecuritydemo.payload.response.Response;
+import org.ksga.springboot.springsecuritydemo.security.service.UserDetailsImpl;
 import org.ksga.springboot.springsecuritydemo.service.AccountService;
 import org.ksga.springboot.springsecuritydemo.service.CommentService;
 import org.ksga.springboot.springsecuritydemo.service.PostService;
+import org.ksga.springboot.springsecuritydemo.utils.CurrentUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
 
@@ -29,30 +33,40 @@ public class CommentRestController {
     private AccountService accountService;
 
     @PostMapping("/comments")
-    public Response<CommentDto> insertComment(@RequestBody CommentRequest commentRequest) {
-        UserDto userDto = accountService.findUserById(commentRequest.getUserId());
-        CommentDto commentDto = new CommentDto()
-                .setContent(commentRequest.getContent())
-                .setPostId(commentRequest.getPostId())
-                .setUser(userDto);
-        commentService.insertComment(commentDto);
-        return Response
-                .<CommentDto>ok()
-                .setPayload(commentDto);
+    public Response<CommentDto> insertComment(@RequestBody CommentRequest commentRequest,
+                                              @ApiIgnore @CurrentUser UserDetailsImpl userDetails) {
+        if (userDetails == null) {
+            throw new ResourceNotFoundException("User is null, means user is not logged in yet.");
+        } else {
+            UserDto userDto = accountService.findUserById(userDetails.getId());
+            CommentDto commentDto = new CommentDto()
+                    .setContent(commentRequest.getContent())
+                    .setPostId(commentRequest.getPostId())
+                    .setUser(userDto);
+            commentService.insertComment(commentDto);
+            return Response
+                    .<CommentDto>ok()
+                    .setPayload(commentDto);
+        }
     }
 
     @PostMapping("/replies")
-    public Response<CommentDto> insertReply(@RequestBody CommentRequest commentRequest) {
-        UserDto userDto = accountService.findUserById(commentRequest.getUserId());
-        CommentDto commentDto = commentService.findByCommentId(commentRequest.getParentId())
-                .setContent(commentRequest.getContent())
-                .setPostId(commentRequest.getPostId())
-                .setParentId(commentRequest.getParentId())
-                .setUser(userDto);
-        commentService.insertReply(commentDto);
-        return Response
-                .<CommentDto>ok()
-                .setPayload(commentDto);
+    public Response<CommentDto> insertReply(@RequestBody CommentRequest commentRequest,
+                                            @ApiIgnore @CurrentUser UserDetailsImpl userDetails) {
+        if (userDetails == null) {
+            throw new ResourceNotFoundException("User is null, means user is not logged in yet.");
+        } else {
+            UserDto userDto = accountService.findUserById(userDetails.getId());
+            CommentDto commentDto = commentService.findByCommentId(commentRequest.getParentId())
+                    .setContent(commentRequest.getContent())
+                    .setPostId(commentRequest.getPostId())
+                    .setParentId(commentRequest.getParentId())
+                    .setUser(userDto);
+            commentService.insertReply(commentDto);
+            return Response
+                    .<CommentDto>ok()
+                    .setPayload(commentDto);
+        }
     }
 
     @GetMapping("/posts/{id}/comments")

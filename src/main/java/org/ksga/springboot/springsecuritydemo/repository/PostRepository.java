@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Many;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.One;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
@@ -22,6 +23,10 @@ import java.util.Optional;
 
 @Mapper
 public interface PostRepository {
+
+    @Insert("INSERT INTO posts (caption, image, user_id) VALUES (#{caption}, #{image}, #{owner.id})")
+    @Options(keyColumn = "id", keyProperty = "id", useGeneratedKeys = true)
+    boolean create(Post post);
 
     @Select("SELECT * FROM posts p INNER JOIN users u ON p.user_id = u.id")
     @Results({

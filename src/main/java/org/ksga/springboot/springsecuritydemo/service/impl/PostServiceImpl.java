@@ -1,5 +1,6 @@
 package org.ksga.springboot.springsecuritydemo.service.impl;
 
+import org.ksga.springboot.springsecuritydemo.exception.ResourceNotFoundException;
 import org.ksga.springboot.springsecuritydemo.model.Post;
 import org.ksga.springboot.springsecuritydemo.payload.dto.PostDto;
 import org.ksga.springboot.springsecuritydemo.payload.mapper.PostMapper;
@@ -19,6 +20,18 @@ public class PostServiceImpl implements PostService {
 
     @Autowired
     private PostMapper postMapper;
+
+    @Override
+    public PostDto create(PostDto postDto) {
+        if (postDto == null) {
+            throw new ResourceNotFoundException("Post object is null");
+        }
+        Post post = postMapper.postDtoToPost(postDto);
+        if (postRepository.create(post)) {
+            postDto = postMapper.postToPostDto(post);
+        }
+        return postDto;
+    }
 
     @Override
     public PostDto findPostById(Long id) {

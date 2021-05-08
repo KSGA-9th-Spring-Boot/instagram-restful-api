@@ -12,6 +12,5 @@ import lombok.experimental.Accessors;
 public class CommentRequest {
     private String content;
     private Long parentId;
-    private Long userId;
     private Long postId;
 }

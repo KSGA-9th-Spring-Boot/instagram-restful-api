@@ -1,5 +1,7 @@
 package org.ksga.springboot.springsecuritydemo.controller.rest;
 
+import io.swagger.annotations.Api;
+import org.ksga.springboot.springsecuritydemo.exception.ResourceNotFoundException;
 import org.ksga.springboot.springsecuritydemo.payload.dto.PostDto;
 import org.ksga.springboot.springsecuritydemo.payload.request.LikeType;
 import org.ksga.springboot.springsecuritydemo.payload.request.PostLikeRequest;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,6 +43,23 @@ public class PostRestController {
             return Response
                     .<List<PostDto>>exception()
                     .setErrors(ex.getMessage());
+        }
+    }
+
+    @PostMapping("/create")
+    public Response<PostDto> createPost(@RequestBody PostRequest postRequest,
+                                        @ApiIgnore @CurrentUser UserDetailsImpl userDetails) {
+        if (userDetails == null) {
+            throw new ResourceNotFoundException("User is null. Please Login");
+        } else {
+            PostDto postDto = new PostDto()
+                    .setCaption(postRequest.getCaption())
+                    .setImage(postRequest.getImage())
+                    .setUserId(userDetails.getId());
+            postService.create(postDto);
+            return Response
+                    .<PostDto>ok()
+                    .setPayload(postDto);
         }
     }
 
@@ -73,11 +93,16 @@ public class PostRestController {
     }
 
     @DeleteMapping("/{id}/delete")
-    public Response<PostDto> deletePostById(@PathVariable long id) {
-        PostDto postDto = postService.deletePostById(id);
-        return Response
-                .<PostDto>ok()
-                .setPayload(postDto);
+    public Response<PostDto> deletePostById(@PathVariable long id,
+                                            @ApiIgnore @CurrentUser UserDetailsImpl userDetails) {
+        if (userDetails == null) {
+            throw new ResourceNotFoundException("You have to log in");
+        } else {
+            PostDto postDto = postService.deletePostById(id);
+            return Response
+                    .<PostDto>ok()
+                    .setPayload(postDto);
+        }
     }
 
     @PutMapping("/{id}/update")

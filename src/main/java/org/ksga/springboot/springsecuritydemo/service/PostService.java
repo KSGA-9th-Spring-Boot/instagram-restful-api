@@ -7,6 +7,7 @@ import org.ksga.springboot.springsecuritydemo.utils.Paging;
 import java.util.List;
 
 public interface PostService {
+    PostDto create(PostDto postDto);
     PostDto findPostById(Long id);
     boolean update(PostDto postDto);
     boolean setNumberOfLikes(PostDto postDto);
