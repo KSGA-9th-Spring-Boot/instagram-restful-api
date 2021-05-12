@@ -13,6 +13,7 @@ import org.ksga.springboot.springsecuritydemo.service.PostService;
 import org.ksga.springboot.springsecuritydemo.utils.CurrentUser;
 import org.ksga.springboot.springsecuritydemo.utils.Paging;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -26,6 +27,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/posts")
 public class PostRestController {
@@ -147,20 +149,10 @@ public class PostRestController {
                 PostDto postDto = postService.findPostById(postLikeRequest.getId());
                 boolean liked = postService.likePost(userDetails.getId(), postLikeRequest.getId());
                 if (liked) {
-                    if (postLikeRequest.getLikeType().name().equals(LikeType.LIKE.name())) {
-                        postDto.setNumberOfLikes(postDto.getNumberOfLikes() + 1);
-                    } else {
-                        postDto.setNumberOfLikes(postDto.getNumberOfLikes() - 1);
-                    }
-                    boolean result = postService.setNumberOfLikes(postDto);
-                    if (result) {
-                        return Response
-                                .<PostDto>ok()
-                                .setPayload(postDto);
-                    } else {
-                        return Response
-                                .notFound();
-                    }
+                    boolean result = postService.setNumberOfLikes(postLikeRequest, postDto);
+                    return Response
+                            .<PostDto>ok()
+                            .setPayload(postDto);
                 } else {
                     return Response
                             .exception();

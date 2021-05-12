@@ -4,6 +4,9 @@ import org.ksga.springboot.springsecuritydemo.exception.ResourceNotFoundExceptio
 import org.ksga.springboot.springsecuritydemo.model.Post;
 import org.ksga.springboot.springsecuritydemo.payload.dto.PostDto;
 import org.ksga.springboot.springsecuritydemo.payload.mapper.PostMapper;
+import org.ksga.springboot.springsecuritydemo.payload.request.LikeType;
+import org.ksga.springboot.springsecuritydemo.payload.request.PostLikeRequest;
+import org.ksga.springboot.springsecuritydemo.payload.request.PostRequest;
 import org.ksga.springboot.springsecuritydemo.repository.PostRepository;
 import org.ksga.springboot.springsecuritydemo.repository.provider.PostFilter;
 import org.ksga.springboot.springsecuritydemo.service.PostService;
@@ -45,7 +48,12 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public boolean setNumberOfLikes(PostDto postDto) {
+    public boolean setNumberOfLikes(PostLikeRequest postLikeRequest, PostDto postDto) {
+        if (postLikeRequest.getLikeType().name().equals(LikeType.LIKE.name())) {
+            postDto.setNumberOfLikes(postDto.getNumberOfLikes() + 1);
+        } else {
+            postDto.setNumberOfLikes(postDto.getNumberOfLikes() - 1);
+        }
         Post post = postMapper.postDtoToPost(postDto);
         return postRepository.setNumberOfLikes(post);
     }
