@@ -137,9 +137,11 @@ public class PostRestController {
         }
     }
 
-    @PatchMapping("/likes")
+    @PatchMapping("/react")
     public Response<PostDto> likePost(PostLikeRequest postLikeRequest,
                                       @ApiIgnore @CurrentUser UserDetailsImpl userDetails) {
+        userDetails = new UserDetailsImpl();
+        userDetails.setId(1L);
         if (userDetails == null) {
             return Response
                     .<PostDto>exception()
@@ -147,15 +149,30 @@ public class PostRestController {
         } else {
             try {
                 PostDto postDto = postService.findPostById(postLikeRequest.getId());
-                boolean liked = postService.likePost(userDetails.getId(), postLikeRequest.getId());
-                if (liked) {
-                    boolean result = postService.setNumberOfLikes(postLikeRequest, postDto);
-                    return Response
-                            .<PostDto>ok()
-                            .setPayload(postDto);
+                if(postLikeRequest.getLikeType().name().equals(LikeType.LIKE.name())) {
+                    boolean liked = postService.likePost(userDetails.getId(), postLikeRequest.getId());
+                    if (liked) {
+                        postDto.setNumberOfLikes(postDto.getNumberOfLikes() + 1);
+                        boolean result = postService.setNumberOfLikes(postDto);
+                        return Response
+                                .<PostDto>ok()
+                                .setPayload(postDto);
+                    } else {
+                        return Response
+                                .exception();
+                    }
                 } else {
-                    return Response
-                            .exception();
+                    boolean disliked = postService.dislikePost(userDetails.getId(), postLikeRequest.getId());
+                    if (disliked) {
+                        postDto.setNumberOfLikes(postDto.getNumberOfLikes() - 1);
+                        boolean result = postService.setNumberOfLikes(postDto);
+                        return Response
+                                .<PostDto>ok()
+                                .setPayload(postDto);
+                    } else {
+                        return Response
+                                .exception();
+                    }
                 }
             } catch (Exception ex) {
                 return Response

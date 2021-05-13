@@ -1,5 +1,6 @@
 package org.ksga.springboot.springsecuritydemo.repository;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Many;
 import org.apache.ibatis.annotations.Mapper;
@@ -74,4 +75,7 @@ public interface PostRepository {
 
     @Insert("INSERT INTO users_like_posts (user_id, post_id) VALUES (#{userId}, #{postId})")
     boolean likePost(Long userId, Long postId);
+
+    @Delete("DELETE FROM users_like_posts WHERE user_id = #{userId} AND post_id = #{postId}")
+    boolean dislikePost(Long userId, Long postId);
 }

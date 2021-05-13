@@ -48,12 +48,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public boolean setNumberOfLikes(PostLikeRequest postLikeRequest, PostDto postDto) {
-        if (postLikeRequest.getLikeType().name().equals(LikeType.LIKE.name())) {
-            postDto.setNumberOfLikes(postDto.getNumberOfLikes() + 1);
-        } else {
-            postDto.setNumberOfLikes(postDto.getNumberOfLikes() - 1);
-        }
+    public boolean setNumberOfLikes(PostDto postDto) {
         Post post = postMapper.postDtoToPost(postDto);
         return postRepository.setNumberOfLikes(post);
     }
@@ -67,6 +62,11 @@ public class PostServiceImpl implements PostService {
     @Override
     public boolean likePost(Long userId, Long postId) {
         return postRepository.likePost(userId, postId);
+    }
+
+    @Override
+    public boolean dislikePost(Long userId, Long postId) {
+        return postRepository.dislikePost(userId, postId);
     }
 
     @Override
